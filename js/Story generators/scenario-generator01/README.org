@@ -1,0 +1,85 @@
+* Engine for scenario generation
+
+This engine is an ongoing development based on the following inspirations:
+- http://2ndage.blogspot.com/2012/12/bookshelf-based-random-adventure.html
+- http://loukoum.online.fr/jdr/adj/gianni1.htm
+
+In this page, a scenario generator is described as being composed of 8 random elements, 6 of them being found in books and 2 of them being rooled on a predefined tables. This leads to a generic phrase describing the rough idea behind the scenario.
+
+** The 8 Elements
+
+To roll inside a book:
+- Roll a book in a set of books (by numbering the books),
+- Roll a page within the book.
+
+| Element               | Original source | Samples                      |
+|-----------------------+-----------------+------------------------------|
+| Sponsor               | Book            | Individual (NPC)             |
+|                       |                 | Organization                 |
+|                       |                 | Circumstances                |
+|                       |                 | Pretexts                     |
+| Destination           | Book            | Place                        |
+|                       |                 | Era, moment in time          |
+|                       |                 | State (trance, dreams)       |
+| Objective             | Book            |                              |
+| Antagonist            | Book            | Individual (NPC)             |
+|                       |                 | Organization                 |
+|                       |                 | Acts or consequences of acts |
+|                       |                 | Circumstances                |
+| Theater of events     | Book            |                              |
+| Interesting element   | Book            |                              |
+| Action                | Roll in table 1 |                              |
+| Motivation (optional) | Roll in table 2 |                              |
+
+** Table 1 Action
+
+| 1D20 | 	Action                                                          |
+|------+-------------------------------------------------------------------------|
+|    1 | Aller chercher (récupérer / s'emparer de / enlever / ramener / acheter) |
+|    2 | Transporter (livrer)                                                    |
+|    3 | Délivrer (sauver / libérer)                                             |
+|    4 | Survivre à (échapper à / fuir / s'évader de)                            |
+|    5 | Atteindre (aller à / pénétrer dans)                                     |
+|    6 | Explorer (découvrir / étudier / inventer)                               |
+|    7 | Élucider (enquêter sur / résoudre)                                      |
+|    8 | Venger                                                                  |
+|    9 | Vendre (échanger / se débarrasser de)                                   |
+|   10 | Humilier (diffamer / salir)                                             |
+|   11 | Défendre (protéger / aider / escorter)                                  |
+|   12 | Convaincre (séduire / soudoyer / convertir / recruter)                  |
+|   13 | Créer (fabriquer / bâtir)                                               |
+|   14 | Dissimuler (cacher / mettre à l'abri)                                   |
+|   15 | Faire chanter (menacer, prendre en otage)                               |
+|   16 | Détruire (tuer)                                                         |
+|   17 | Tromper (faire croire / trahir / mentir / tricher)                      |
+|   18 | Se sacrifier pour                                                       |
+|   19 | Conquérir (envahir / ravager / affronter / vaincre)                     |
+|   20 | Autre ou au choix                                                       |
+
+| 1D20 | Motivation                                                                             |
+|------+----------------------------------------------------------------------------------------|
+|    1 | Obéissance (à un patron, une hiérarchie, etc...)                                       |
+|    2 | Bénéfice matériel (argent, objets, terres, etc...)                                     |
+|    3 | Bénéfice immatériel (réputation, gloire, amour, fierté, orgueil, amour-propre, etc...) |
+|    4 | Bénéfice spirituel (bénédiction, absolution, etc...)                                   |
+|    5 | Survie                                                                                 |
+|    6 | Contrainte (PJ prisonniers, otages en jeu, etc...)                                     |
+|    7 | Vengeance (peut inclure la résistance à l'occupant)                                    |
+|    8 | Plaisir (gourmandise, luxure, etc...)                                                  |
+|    9 | Fanatisme (zèle religieux, patriotisme, racisme, etc...)                               |
+|   10 | Solidarité (envers sa famille, ses amis, ses collègues, ses concitoyens, etc...)       |
+|   11 | Altruisme (serviabilité, compassion, bonté, etc...)                                    |
+|   12 | Adrénaline (se dépasser, accomplir un exploit, etc...)                                 |
+|   13 | Autodestruction (sacrifice, automutilation, etc...)                                    |
+|   14 | Curiosité                                                                              |
+|   15 | Méchanceté (sadisme, volonté de nuire, etc...)                                         |
+|   16 | Paresse, facilité                                                                      |
+|   17 | Pris dans le cours des évènements (les PJ sont au mauvais endroit au mauvais moment)   |
+|   18 | Peur (terreur, angoisse, phobie, etc...)                                               |
+|   19 | Altération du discernement (drogues, folie, etc...)                                    |
+|   20 | Autre ou au choix                                                                      |
+
+** Scenario Structure
+
+The _Sponsor_ leads the PCs to go to the _Destination_ to do the _Action_ on the _Objective_. Motivated by the _Motivation_, the PCs will be troubled by the _Antagonist_ on the _Theater of events_. One major element of the scenario will be the _Interesting element_.
+

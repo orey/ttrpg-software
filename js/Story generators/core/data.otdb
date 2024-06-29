@@ -1,0 +1,49 @@
+//*********************************************************************
+// header
+subject|predicate|object
+// list of sponsors
+Weather condition|a|Sponsor
+A storm is coming.|a|Weather condition
+The desert heat becomes unbearable.|a|Weather condition
+Is is raining so hard that all roads are blocked.|a|Weather condition
+//
+Need shelter|a|Sponsor
+Bad people are searching for the PCs and they need to hide.|a|Need shelter
+//
+Organization|a|Sponsor
+Agency X is calling the PCs.|a|Agency
+The Club Pythagore is calling the PCs.|a|Agency
+//
+People|a|Sponsor
+Mister Bean is calling the PCs.|a|People
+The cousin of a PC is calling him/her.|a|People
+One PC caught a disease and must see a doctor.|a|Sponsor
+//*********************************************************************
+City|a|Destination
+Paris|a|City
+Berlin|a|City
+London|a|City
+Tombouctou|a|City
+//
+Planets|a|Destination
+Trantor|a|Planet
+the Moon|a|Planet
+Mars|a|Planet
+//
+Epoch|a|Destination
+the 1920s|a|Epoch
+the Stone Age|a|Epoch
+//
+Parallel universe|a|Destination
+Fringe world|a|Parallel universe
+// D&D
+Laelith|a|City
+the castle of Lord Byron|a|Destination
+the sewers of Krashnik|a|Destination
+in trance|a|Destination
+a dream|a|Destination
+//
+Hero|has|a big sword
+Hero|has|a magical ring
+
+

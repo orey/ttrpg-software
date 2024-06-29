@@ -1,0 +1,4 @@
+* Engine for Vladimir Propp's Morphology of Folktale
+
+This engine uses the =../core/dice.js= utilities.
+

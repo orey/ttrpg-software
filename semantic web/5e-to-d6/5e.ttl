@@ -1,0 +1,127 @@
+# GNU GPL V3 - Copyleft rey.olivier@gmail.com May 2024
+# General includes
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ns: <https://orey.github.io/5e/1.0/ttrpg#> .
+
+# Defining the game
+ns:5E a ns:Game ;
+      rdfs:label "fifth edition"@en
+      ns:SkillType ns:SkillsInheritFromCharacteristics.
+
+#characteristics
+ns:STR a ns:Characteristic ;
+       rdfs:domain ns:5E ;
+       rdfs:label "strength"@en .
+
+ns:DEX a ns:Characteristic ;
+       rdfs:domain ns:5E ;
+       rdfs:label "dexterity"@en .
+
+ns:CON a ns:Characteristic ;
+       rdfs:domain ns:5E ;
+       rdfs:label "constitution"@en .
+
+ns:INT a ns:Characteristic ;
+       rdfs:domain ns:5E ;
+       rdfs:label "intelligence"@en .
+
+ns:WIS a ns:Characteristic ;
+       rdfs:domain ns:5E ;
+       rdfs:label "wisdom"@en .
+
+ns:CHA a ns:Characteristic ;
+       rdfs:domain ns:5E ;
+       rdfs:label "charisma"@en .
+
+# Skills
+
+ns:Athletics a ns:Skill ;
+             rdfs:domain ns:5E ;
+             ns:inheritsFrom ns:STR ;
+             rdfs:label "athletics"@en .
+
+ns:Acrobatics a ns:Skill ;
+              rdfs:domain ns:5E ;
+              ns:inheritsFrom ns:DEX ;
+              rdfs:label "acrobatics"@en .
+
+ns:SleightOfHand a ns:Skill ;
+                 rdfs:domain ns:5E ;
+                 ns:inheritsFrom ns:DEX ;
+                 rdfs:label "sleight of hand"@en .
+
+ns:Stealth a ns:Skill ;
+           rdfs:domain ns:5E ;
+           ns:inheritsFrom ns:DEX ;
+           rdfs:label "sleight of hand"@en .
+
+ns:Arcana a ns:Skill ;
+          rdfs:domain ns:5E ;
+          ns:inheritsFrom ns:INT ;
+          rdfs:label "arcana"@en .
+
+ns:History a ns:Skill ;
+           rdfs:domain ns:5E ;
+           ns:inheritsFrom ns:INT ;
+           rdfs:label "history"@en .
+
+ns:Investigation a ns:Skill ;
+                 rdfs:domain ns:5E ;
+                 ns:inheritsFrom ns:INT ;
+                 rdfs:label "investigation"@en .
+
+ns:Nature a ns:Skill ;
+          rdfs:domain ns:5E ;
+          ns:inheritsFrom ns:INT ;
+          rdfs:label "nature"@en .
+
+ns:Religion a ns:Skill ;
+            rdfs:domain ns:5E ;
+            ns:inheritsFrom ns:INT ;
+            rdfs:label "religion"@en .
+
+ns:AnimalHandling a ns:Skill ;
+                  rdfs:domain ns:5E ;
+                  ns:inheritsFrom ns:WIS ;
+                  rdfs:label "animal handling"@en .
+
+ns:Insight a ns:Skill ;
+           rdfs:domain ns:5E ;
+           ns:inheritsFrom ns:WIS ;
+           rdfs:label "insight"@en .
+
+ns:Medicine a ns:Skill ;
+            rdfs:domain ns:5E ;
+            ns:inheritsFrom ns:WIS ;
+            rdfs:label "medicine"@en .
+
+ns:Perception a ns:Skill ;
+              rdfs:domain ns:5E ;
+              ns:inheritsFrom ns:WIS ;
+              rdfs:label "perception"@en .
+
+ns:Survival a ns:Skill ;
+            rdfs:domain ns:5E ;
+            ns:inheritsFrom ns:WIS ;
+            rdfs:label "survival"@en .
+
+ns:Deception a ns:Skill ;
+             rdfs:domain ns:5E ;
+             ns:inheritsFrom ns:CHA ;
+             rdfs:label "deception"@en .
+
+ns:Intimidation a ns:Skill ;
+                rdfs:domain ns:5E ;
+                ns:inheritsFrom ns:CHA ;
+                rdfs:label "intimidation"@en .
+
+ns:Performance a ns:Skill ;
+               rdfs:domain ns:5E ;
+               ns:inheritsFrom ns:CHA ;
+               rdfs:label "performance"@en .
+
+ns:Persuasion a ns:Skill ;
+              rdfs:domain ns:5E ;
+              ns:inheritsFrom ns:CHA ;
+              rdfs:label "persuasion"@en .

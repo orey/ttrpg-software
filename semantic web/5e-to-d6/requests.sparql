@@ -1,0 +1,31 @@
+#------------------------------------------
+# Get the structural links between classes : warning this triple is not inside the database !
+
+PREFIX ga: <https://orey.github.io/graphapps-V2#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX : <undefined>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+Construct{ ?d ?p ?r}
+WHERE {
+  ?p rdfs:subPropertyOf ga:link ;
+  rdfs:domain ?d ;rdfs:range ?r .
+}
+
+#------------------------------------------
+# Get the links between instances : those links exist
+
+PREFIX ga: <https://orey.github.io/graphapps-V2#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX : <undefined>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+Construct{ ?s ?p ?o}
+WHERE {
+  ?s ?p ?o .
+  ?p rdfs:subPropertyOf ga:link ;
+}
+
+
+# Problem is attribute2 is a type and is used in an instance world
+

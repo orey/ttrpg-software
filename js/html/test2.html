@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>HTML Canvas</title>
+  </head>
+  <body>
+    <canvas id="newCanvas" width="1000" height="500" style="border:2px solid #000000;"></canvas>
+    <script>
+      const X = 1000,
+            Y = 500;
+      var canvas = document.getElementById("newCanvas");
+      var ctxt = canvas.getContext("2d");
+      ctxt.fillStyle = "#56A7E2";
+      ctxt.fillRect(0,0,250,120);
+
+      function drawPoint(context, x, y, label, color, size) {
+      	  if (color == null) {
+              color = '#000';
+          }
+          if (size == null) {
+              size = 5;
+          }
+          
+      	  // to increase smoothing for numbers with decimal part
+      	  var pointX = Math.round(x);
+          var pointY = Math.round(y);
+
+          context.beginPath();
+          context.fillStyle = color;
+          context.arc(pointX, pointY, size, 0 * Math.PI, 2 * Math.PI);
+          context.fill();
+          
+      	  if (label) {
+              var textX = pointX;
+              var textY = Math.round(pointY - size - 3);
+              
+              context.font = 'Italic 14px Arial';
+              context.fillStyle = color;
+              context.textAlign = 'center';
+              context.fillText(label, textX, textY);
+          }
+      }
+
+      function drawLine(ctx,x1,y1,x2,y2,color,size) {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = size;
+          
+          // draw a red line
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+
+      }
+
+      class Referential {
+          constructor(ctx,X,Y){
+              this.ctx = ctx;
+              this.X = X;
+              this.Y = Y;
+              this.origin = { x : Math.round(this.X/2),
+                              y : Math.round(this.Y/2)};
+          }
+          print() {
+              drawLine(this.ctx,
+                       0, Math.round(this.Y/2),
+                       this.X, Math.round(this.Y/2),
+                       "black", 0.5);
+              drawLine(this.ctx,
+                       Math.round(this.X/2), 0,
+                       Math.round(this.X/2), Y,
+                       "black", 0.5);
+              drawPoint(this.ctx, this.origin.x, this.origin.y, "O", "blue", 2);
+              drawPoint(this.ctx, Math.round((this.X)/2) , Math.round((this.Y)/20), "y", "black", 0);
+              drawPoint(this.ctx, Math.round((this.X)*19/20) , Math.round((this.Y)/2), "x", "black", 0);
+          }
+      }
+
+      
+      
+      // Usage example:
+      drawPoint(ctxt, 20, 30, 'A', 'red', 1);
+      drawPoint(ctxt, 50, 120, 'B', 'blue', 1.7);
+      drawPoint(ctxt, 140, 70, 'C', 'orange', 5);
+      drawLine(ctxt, 20, 30, 50,120,'black', 5);
+      let REF = new Referential(ctxt,X, Y);
+      REF.print();
+
+
+    </script>
+  </body>
+</html>
+

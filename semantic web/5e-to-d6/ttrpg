@@ -1,0 +1,44 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ns:Game a rdfs:Class ;
+        rdfs:label "game"@en .
+
+ns:Characteristic a rdfs:Class ;
+                  rdfs:label "characteristic"@en .
+
+ns:Skill a rdfs:Class ;
+         rdfs:label "skill"@en .
+
+
+
+
+
+#reprendre ici
+
+ns:SkillTypeList a rdf.Alt
+
+# The Skill type has a relation to Characteristic
+ns:SkillType a rdf:property ;
+             rdfs:label "type of skills"@gen ;
+             rdfs:domain ns:Game ;
+             rdfs:range ns:Characteristic .
+
+# Depending of the game, the skills can be attached or not to the characteristics
+ns:SkillsInheritsFrom a ns:SkillCharacteristicRelationship ;
+                      rdfs:label "skills inherit from characteristics"@en ;
+                      rdfs:comment "skills are bonus on top of characteristics"@en .
+
+ns:SkillsAutonomous a ns:SkillCharacteristicRelationship ;
+                      rdfs:label "skills inherit from characteristics"@en ;
+                      rdfs:comment "skills are bonus on top of characteristics"@en .
+
+# When they are: "domain:skill inheristsFrom domain:characteristic ."
+# If they do, they are modifiers
+ns:inheritsFrom a rdf:property ;
+                rdfs: label "inherits from"@en ;
+                rdfs:domain ns:Skill ;
+                rdfs:range ns:Characteristic .
+
+     
+

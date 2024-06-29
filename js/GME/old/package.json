@@ -1,0 +1,28 @@
+{
+  "name": "gme",
+  "version": "1.0.0",
+  "description": "Game Master Emulator",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orey/gme.git"
+  },
+  "keywords": [
+    "gme",
+    "jdr",
+    "ttrpg"
+  ],
+  "author": "Olivier Rey",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/orey/gme/issues"
+  },
+  "homepage": "https://github.com/orey/gme#readme",
+  "dependencies": {
+    "clear": "^0.1.0",
+    "readline-sync": "^1.4.10"
+  }
+}

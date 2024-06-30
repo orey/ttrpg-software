@@ -81,6 +81,7 @@
 (test-roll-combi)
 
 (defun test-replace-elem-by-list ()
+  (print "---------------------------test-replace-elem-by-list")
   (print "Test with '(0 1 2 3 4 5 6) 3 '(a b c)")
   (print (replace-elem-by-list '(0 1 2 3 4 5 6) 3 '(a b c)))
   (print "Test with '(0 1 2 3 4 5 6) 0 '(a b c)")

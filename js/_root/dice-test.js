@@ -67,5 +67,17 @@ function testRollCombi(){
 
 testRollCombi();
 
+//-----------------------------------------------rollFourKeepThree
+function testRollFourKeepThree(){
+    console.log("---------------------------rollFourKeepThree");
+    console.log(dice.rollFourKeepThree(true));
+    console.log(dice.rollFourKeepThree(true));
+    console.log(dice.rollFourKeepThree(true));
+    console.log(dice.rollFourKeepThree(true));
+}
+
+testRollFourKeepThree();
+
+
 
 

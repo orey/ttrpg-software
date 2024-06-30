@@ -26,7 +26,9 @@ function testGenerateAbilities(){
     console.log(dd.generateAbilities(dd.ABILITY_WAY_STANDARD));
     console.log(dd.generateAbilities(dd.ABILITY_WAY_3D6));
     console.log(dd.generateAbilities(dd.ABILITY_WAY_2D6PLUS6));
-    
-
+    console.log(dd.generateAbilities(dd.ABILITY_WAY_4D6));
 }
-testGenerateAbilities ();
+
+testGenerateAbilities();
+
+

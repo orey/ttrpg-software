@@ -84,12 +84,29 @@ function rollCombi(combination){
 }
 
 
+/*
+  Second way to draw abilities with 4d6 and keep the 3 best
+*/
+function rollFourKeepThree(verbose=false){
+    let arr = [rollCombi("1d6"), rollCombi("1d6"), rollCombi("1d6"), rollCombi("1d6")];
+    if (verbose) console.log(arr);
+    let min = Math.min(...arr);
+    let index = arr.indexOf(min);
+    arr.splice(index, 1);
+    if (verbose) console.log(arr);
+    return arr.reduce((x, y) => x + y);
+}
+
+
+
+
 /*****************************************/
 
 if (typeof module !== "undefined" && module.exports) {
     module.exports = { rollDie,
                        parseCombi,
                        rollCombi,
+                       rollFourKeepThree,
                      }
 }
 

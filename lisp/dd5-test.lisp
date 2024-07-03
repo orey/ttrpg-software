@@ -27,5 +27,11 @@
 
 (print "--------------------------------default strategy")
 (print (roll-abilities 'POLLUX))
+(print (roll-abilities 'POLLUX))
+(print (roll-abilities 'TOTO))
+(print (roll-abilities 12))
 
-
+(print "--------------------------------Apply race")
+(defparameter *pc* '(10 10 10 10 10 10))
+(mapcar #'(lambda (x) (print x) (print (apply-race *pc* x)))
+        '(human mountain-dwarf hill-dwarf high-elf wood-elf stout-halfling lightfoot-halfling))

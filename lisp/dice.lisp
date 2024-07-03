@@ -76,7 +76,7 @@
   "Launch dice to roll combis"
   (let* ((lst (parse-combi str))
          (rolls (make-list-variable (car lst) #'roll-die (cadr lst)))
-         (newlist (nconc rolls (cddr lst))))
+         (newlist (append rolls (cddr lst))))
     (reduce #'+ newlist)))
 
 

@@ -16,7 +16,7 @@
       (floor (/ (- ab 10) 2))))
 
 
-(defun roll-abilities(mode)
+(defun roll-abilities(&optional mode)
   "Roll abilities with various strategies"
   (let ((lst nil))
     (cond
@@ -52,6 +52,29 @@
        (format t "Try another option~%")))
     newlst))
 
+
+(defun dwarf-p (x)
+  (or (eql x 'mountain-dwarf) (eql x 'hill-dwarf) (eql x 'dwarf)))
+
+(defun elf-p (x)
+  (or (eql x 'high-elf) (eql x 'wood-elf) (eql x 'elf)))
+
+(defun halfling-p (x)
+  (or (eql x 'stout-halfling) (eql x 'lightfoot-halfling) (eql x 'halfling)))
+
+(defun human-p (x)
+  (eql x 'human))
+
+
+(defun get-racial-traits (race)
+  " get racial traits:
+    age, alignment, size, speed, language"
+  (let ((res nil))
+    (cond ((dwarf-p race)
+           (setf res (list (draw-between 50 100) 'lawful-good 1.5 'medium '(common dwarwish))))
+          (t
+           (print "reprendre ici")))
+    res))
 
 
 

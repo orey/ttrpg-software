@@ -54,9 +54,21 @@
   (print "---------------------------test-roll-four-keep-three")
   (print (roll-four-keep-three T)))
 
-(test-roll-four-keep-three)
-(test-roll-four-keep-three)
-(test-roll-four-keep-three)
-(test-roll-four-keep-three)
-(test-roll-four-keep-three)
-(test-roll-four-keep-three)
+(dotimes (i 6)
+  (test-roll-four-keep-three))
+
+;;;---------------------------------------test-draw-between
+(defparameter *min* 50)
+(defparameter *max* 100)
+(defparameter *nb* 1000)
+(let ((average (/ (+ *min* *max*) 2))
+      (temp 0)
+      (acc 0.0))
+  (format t "~%---------------------------test-draw-between~%")
+  (dotimes (i *nb*)
+    (progn
+      (setf temp (draw-between *min* *max*))
+      (format t "~d|" temp)
+      (setf acc (+ acc temp))))
+  (format t "~%Theoretical average: ~d~%" average)
+  (format t "Average: ~d~%" (/ acc *nb*)))

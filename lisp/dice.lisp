@@ -96,7 +96,10 @@
     acc))
         
               
-           
+(defun draw-between (min max)
+  "Returns a random value between min and max-1"
+  (+ min (random (- max min))))
+
     
       
     

@@ -224,32 +224,10 @@
      --------------------------------------------
      Script complet du GME
 --------------------------------------------*/
-    'use strict';
 
-    const VERBOSE= true;
-
-    const myconsole = {
-        log: function(s){
-            if (VERBOSE)
-                console.log(s);
-        }
-    }
     //======================================= DICE
 
-    function rollDie(faces){
-        return Math.floor((Math.random()*faces)+1);
-    }
 
-    // Dice roller
-    function roll(number, faces, pips){
-        let result = pips;
-        let temp = 0;
-        for (let i=0;i<number;i++){
-            temp = rollDie(faces);
-            result += temp;
-        }
-        return result;
-    }
 
     // Expected input is "2d6+3" or "4d10"
     function parseDices(s){

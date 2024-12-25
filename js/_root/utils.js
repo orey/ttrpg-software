@@ -59,6 +59,10 @@ function formatPercentage(x) {
     return parseFloat(x).toFixed(2)+"%";
 }
 
+function capFirst(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 
 //------------------------------------------------------tools
 function range(n) {
@@ -81,5 +85,6 @@ if (typeof module !== "undefined" && module.exports) {
                        formatPercentage,
                        integerp,
                        range,
+                       capFirst,
                      }
 }

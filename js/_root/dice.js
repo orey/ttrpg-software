@@ -2,16 +2,37 @@
  * Dice module
  * Author: rey.olivier@gmail.com
  * Licence: GNU GPL v3
- * Date: July 2024
+ * Date: July 2024 revised December 2024
  ***********************************************/
 "use strict";
 
+//================================================================= Random functions
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function getRandom(nb) {
+    return Math.floor(Math.random() * nb);
+}
+
+function getRandomCeiling(nb) {
+    return Math.ceil(Math.random() * nb);
+}
+
+//================================================================= Dice functions
 
 /*
   Main random function: Used to throw a dice with 'faces' faces 
  */
 function rollDie(faces){
     return Math.floor((Math.random()*faces)+1);
+}
+
+/*
+  For compatibility
+ */
+function dice(nb) {
+    return Math.floor((Math.random()*nb)+1);
 }
 
 
@@ -97,16 +118,18 @@ function rollFourKeepThree(verbose=false){
     return arr.reduce((x, y) => x + y);
 }
 
-
-
-
 /*****************************************/
 
 if (typeof module !== "undefined" && module.exports) {
-    module.exports = { rollDie,
-                       parseCombi,
-                       rollCombi,
-                       rollFourKeepThree,
-                     }
+    module.exports = {
+        getRandomInt,
+        getRandom,
+        getRandomCeiling,
+        rollDie,
+        dice,
+        parseCombi,
+        rollCombi,
+        rollFourKeepThree,
+    }
 }
 

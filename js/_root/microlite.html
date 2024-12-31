@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microlite20</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            margin-bottom: 10px;
+        }
+        .character-display {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Dice thrower</h2>
+    <div class="section">
+      <label for="dice-formula">Dice formula (xD+/-y):</label>
+      <input type="text" id="dice-formula" name="dice-formula"><br><br>
+      <button onclick="diceThrow()">Dice throw</button>
+      <button onclick="throwFourKeepThreeGraphical()">Throw 4D6 keep the best 3</button>
+      <button onclick="diceClear()">Clear</button>
+      
+      <div id="dice-display" class="dice-display"></div>
+    </div>
+    <div class="section">
+      <h2>Character Creation</h2>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name"><br><br>
+      <label for="str">STR:</label>
+      <input type="number" id="str" name="str" min="1"><br><br>
+      <label for="dex">DEX:</label>
+      <input type="number" id="dex" name="dex" min="1"><br><br>
+      <label for="mind">MIND:</label>
+      <input type="number" id="mind" name="mind" min="1"><br><br>
+      <button onclick="displayCharacter()">Display Character</button>
+      <button onclick="saveCharacter()">Save Character</button>
+    </div>
+    
+    <div class="section">
+      <h2>Display Character</h2>
+      <div id="character-display" class="character-display"></div>
+    </div>
+    
+    <div class="section">
+      <h2>Existing Character</h2>
+      <input type="file" id="file-input" accept=".json"><br><br>
+      <button onclick="loadCharacter()">Load Character</button>
+    </div>
+  </div>
+  
+  <script>
+    /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /*           Graphical functions                                      */
+    /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    function diceThrow() {
+        let diceFormula = document.getElementById('dice-formula').value;
+        if (diceFormula == "") {
+            console.log("Defaulting on 1d20");
+            diceFormula = "1d20";
+            document.getElementById('dice-formula').value = "1d20";
+        }
+        const formula = parseDice(diceFormula);
+        const myroll = roll(...formula);
+        
+        const diceDisplay = document.getElementById('dice-display');
+        diceDisplay.innerHTML = `
+               <p><strong>Dice formula:</strong> ${diceFormula}</p>
+               <p><strong>Dice formula decrypted:</strong> ${formula}</p>
+               <p><strong>Result:</strong> ${myroll}</p>
+          `;
+    }
+    function throwFourKeepThreeGraphical() {
+        const res = throwFourKeepThree();
+        const diceDisplay = document.getElementById('dice-display');
+        diceDisplay.innerHTML = `
+               <p><strong>Dice formula:</strong> 4D6 and keep the best 3</p>
+               <p><strong>Dice formula decrypted:</strong> 4 times 1D6</p>
+               <p><strong>Result:</strong> ${res}</p>
+          `;
+    }
+
+    function diceClear() {
+        document.getElementById('dice-formula').value = "";
+        document.getElementById('dice-display').innerHTML = "";
+    }
+
+
+    
+    function displayCharacter() {
+        const name = document.getElementById('name').value;
+        const str = document.getElementById('str').value;
+        const dex = document.getElementById('dex').value;
+        const mind = document.getElementById('mind').value;
+        
+        const characterDisplay = document.getElementById('character-display');
+        characterDisplay.innerHTML = `
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>STR:</strong> ${str}</p>
+                <p><strong>DEX:</strong> ${dex}</p>
+                <p><strong>MIND:</strong> ${mind}</p>
+            `;
+    }
+    
+    function saveCharacter() {
+        const name = document.getElementById('name').value;
+        const str = document.getElementById('str').value;
+        const dex = document.getElementById('dex').value;
+        const mind = document.getElementById('mind').value;
+        
+        const character = {
+            name: name,
+            str: parseInt(str),
+            dex: parseInt(dex),
+            mind: parseInt(mind)
+        };
+
+        const jsonString = JSON.stringify(character, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${name}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+    
+    function loadCharacter() {
+        const fileInput = document.getElementById('file-input');
+        const file = fileInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const character = JSON.parse(e.target.result);
+                document.getElementById('name').value = character.name;
+                document.getElementById('str').value = character.str;
+                document.getElementById('dex').value = character.dex;
+                document.getElementById('mind').value = character.mind;
+                displayCharacter();
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    /**********************************************************************/
+    /*           Non graphical functions                                  */
+    /**********************************************************************/
+    
+    /*=============================================================
+      Dice section
+      =============================================================*/
+
+    // Random function
+    function rollDie(faces){
+        return Math.floor((Math.random()*faces)+1);
+    }
+
+    // Dice roller
+    function roll(number, faces, pips){
+        let result = pips;
+        let temp = 0;
+        for (let i=0;i<number;i++){
+            temp = rollDie(faces);
+            result += temp;
+        }
+        return result;
+    }
+
+    function notANumber(s,defo="0"){
+        console.log('"' + s + '" is not a number, replacing by: ' + defo);
+    }
+    
+    /*-------------------------------------------------
+      Expected input is "2d6+3" or "4d10"
+     -------------------------------------------------*/
+    function parseDice(s){
+        let nb = 0, faces = 0, pips = 0;
+        let dice = "";
+        // Is there a pip?
+        if ((s.includes("+")) || (s.includes("-")) ) {
+            let temp;
+            if (s.includes("+")) {
+                temp = s.split("+");
+                pips = parseInt(temp[1]);
+            }
+            if (s.includes("-")){
+                temp = s.split("-");
+                pips = parseInt('-' + temp[1]);
+            }
+            if (isNaN(pips)){
+                notANumber(temp[1],"0");
+                pips = 0;
+            }
+            dice = temp[0];
+        }
+        else 
+            dice = s;
+        if ((dice.includes("d")) || (dice.includes("D"))) {
+            let temp;
+            if (dice.includes("d"))
+                temp = dice.split("d");
+            if (dice.includes("D"))
+                temp = dice.split("D");
+            nb = parseInt(temp[0]);
+            if (isNaN(nb)) {
+                nb = 1;
+                notANumber(temp[0],"1");
+            }
+            faces = parseInt(temp[1]);
+            if (isNaN(faces)) {
+                faces = 6;
+                notANumber(temp[1],"6");
+            }
+        }
+        else {
+            console.log('There is neither "d" nor "D" in the string to parse. Exiting function.');
+            return false;
+        }
+        console.log(s + " => " + String([nb, faces, pips]));
+        return [nb, faces, pips];
+    }
+
+    function throwFourKeepThree() {
+        mytab = [ roll(1,6,0),roll(1,6,0),roll(1,6,0),roll(1,6,0) ]
+        console.log(mytab);
+        var min = Math.min(...mytab);
+        let alreadytaken = false;
+        let res = 0
+        for (let e of mytab) {
+            if ((e == min) && (alreadytaken == false))
+                alreadytaken = true;
+            else {
+                console.log("Taken: " + String(e))
+                res += e;
+            }
+        }
+        console.log("Result = " + String(res))
+        return res;
+    }
+  </script>
+</body>
+</html>

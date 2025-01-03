@@ -1,0 +1,9 @@
+{ "version": "1",
+                        "name": "toto",
+                        "str": 12,
+                        "dex": 12,
+                        "mind": 12,
+                        "strbonus": 1,
+                        "dexbonus": 1,
+                        "mindbonus": 1
+                      }

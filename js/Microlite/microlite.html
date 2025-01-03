@@ -98,10 +98,10 @@
       </table>
       <br/>
       <button onclick="displayCharacter()">Display Character</button>
-      <button onclick="calculateStatBonuses()">Calculate Stat Bonuses</button>
-
-      <div id="character-display" class="character-display"></div>
-
+      <!-- Useless button now that withe events, the fields are automatically updated
+           <button onclick="calculateStatBonuses()">Calculate Stat Bonuses</button> -->
+      <textarea id="character-display" name="character-display" rows="10" cols="25" readonly>
+      </textarea> 
       <button onclick="saveCharacter()">Save Character</button>
 
       <p>Existing Character:
@@ -251,14 +251,11 @@
         const str = document.getElementById('str').value;
         const dex = document.getElementById('dex').value;
         const mind = document.getElementById('mind').value;
+        const perso = new Character(name, str, dex, mind);
         
         const characterDisplay = document.getElementById('character-display');
-        characterDisplay.innerHTML = `
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>STR:</strong> ${str}</p>
-                <p><strong>DEX:</strong> ${dex}</p>
-                <p><strong>MIND:</strong> ${mind}</p>
-            `;
+        //characterDisplay.innerHTML = perso.print();
+        characterDisplay.innerHTML = `${perso.toJSON()}`;
     }
     
     function saveCharacter() {
@@ -266,15 +263,18 @@
         const str = document.getElementById('str').value;
         const dex = document.getElementById('dex').value;
         const mind = document.getElementById('mind').value;
-        
-        const character = {
+        const perso = new Character(name, str, dex, mind);
+
+        /*const character = {
             name: name,
             str: parseInt(str),
             dex: parseInt(dex),
             mind: parseInt(mind)
         };
 
-        const jsonString = JSON.stringify(character, null, 2);
+        const jsonString = JSON.stringify(character, null, 2);*/
+        const jsonString = perso.toJSON();
+        
         const blob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -401,7 +401,36 @@
       function statBonus(stat) { 
           return Math.floor((stat-10)/2);
       }
-    
+
+
+      class Character {
+          constructor(name, str, dex, mind) {
+              this.name = name;
+              this.str = str; // int so is the rest
+              this.dex = dex;
+              this.mind = mind;
+              this.strbonus = statBonus(this.str);
+              this.dexbonus = statBonus(this.dex);
+              this.mindbonus = statBonus(this.mind);
+          }
+          print() {
+              return `<p><strong>Name:</strong> ${this.name}</p>
+                      <p><strong>STR:</strong> ${this.str} - STR Bonus: ${this.strbonus}</p>
+                      <p><strong>DEX:</strong> ${this.dex} - DEX Bonus: ${this.dexbonus}</p>
+                      <p><strong>MIND:</strong> ${this.mind} - MIND Bonus: ${this.mindbonus}</p>`;
+          }
+          toJSON() {
+              return '{"version":1'
+                  + ',"name":"' + this.name
+                  + ',"str":'   + this.str
+                  + ',"dex":'   + this.dex
+                  + ',"mind":'  + this.mind
+                  + ',"strbonus":' + this.strbonus
+                  + '"dexbonus":'  + this.dexbonus
+                  + '"mindbonus":' + this.mindbonus
+                  + '}';
+          }
+      }
 
   </script>
 </body>

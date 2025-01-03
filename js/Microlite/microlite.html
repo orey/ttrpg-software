@@ -24,20 +24,46 @@
             padding: 10px;
             margin-top: 10px;
         }
+        input[readonly] {
+            background-color:lightgrey;
+        }
     </style>
 </head>
 <body>
   <div class="container">
-    <h2>Dice thrower</h2>
+    <!--*******************************************************************************-->
     <div class="section">
+      <h2>Dice thrower</h2>
       <label for="dice-formula">Dice formula (xD+/-y):</label>
       <input type="text" id="dice-formula" name="dice-formula"><br><br>
       <button onclick="diceThrow()">Dice throw</button>
-      <button onclick="throwFourKeepThreeGraphical()">Throw 4D6 keep the best 3</button>
       <button onclick="diceClear()">Clear</button>
       
       <div id="dice-display" class="dice-display"></div>
     </div>
+    <!--*******************************************************************************-->
+    <div class="section">
+      <h2>Stats Determination</h2>
+      <button onclick="throwFourKeepThreeGraphical()">Throw 4D6 keep the best 3</button>
+      <button onclick="caracClear()">Clear</button>
+
+      <div id="carac-display" class="carac-display">
+        <p><strong>Throws: </strong>
+          <input type="text" id="dice1" name="dice1" size="1" readonly>
+          <input type="text" id="dice2" name="dice2" size="1" readonly>
+          <input type="text" id="dice3" name="dice3" size="1" readonly>
+          <input type="text" id="dice4" name="dice4" size="1" readonly>
+        </p>
+        <p><strong>Total of the 3 best: </strong>
+          <input type="text" id="threebest" name="threebest" size="4" readonly>
+      </div>
+      <p><strong>Assign to: </strong>
+        <button onclick="assignTo('str')">STR</button>
+        <button onclick="assignTo('dex')">DEX</button>
+        <button onclick="assignTo('mind')">MIND</button>
+      </p>
+    </div>
+    <!--*******************************************************************************-->
     <div class="section">
       <h2>Character Creation</h2>
       <label for="name">Name:</label>
@@ -52,11 +78,12 @@
       <button onclick="saveCharacter()">Save Character</button>
     </div>
     
+    <!--*******************************************************************************-->
     <div class="section">
       <h2>Display Character</h2>
       <div id="character-display" class="character-display"></div>
     </div>
-    
+    <!--*******************************************************************************-->
     <div class="section">
       <h2>Existing Character</h2>
       <input type="file" id="file-input" accept=".json"><br><br>
@@ -64,10 +91,13 @@
     </div>
   </div>
   
+  <!--=================================================================================-->
   <script>
     /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /*           Graphical functions                                      */
     /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+    /*-----------------------------DICE*/
     function diceThrow() {
         let diceFormula = document.getElementById('dice-formula').value;
         if (diceFormula == "") {
@@ -85,23 +115,35 @@
                <p><strong>Result:</strong> ${myroll}</p>
           `;
     }
-    function throwFourKeepThreeGraphical() {
-        const res = throwFourKeepThree();
-        const diceDisplay = document.getElementById('dice-display');
-        diceDisplay.innerHTML = `
-               <p><strong>Dice formula:</strong> 4D6 and keep the best 3</p>
-               <p><strong>Dice formula decrypted:</strong> 4 times 1D6</p>
-               <p><strong>Result:</strong> ${res}</p>
-          `;
-    }
 
     function diceClear() {
         document.getElementById('dice-formula').value = "";
         document.getElementById('dice-display').innerHTML = "";
     }
 
+    /*-----------------------------STATS*/
+    function throwFourKeepThreeGraphical() {
+        let res, mytab;
+        [res, mytab] = throwFourKeepThree();
+        for (let i = 0; i < mytab.length;i++)
+            document.getElementById('dice' + String(i+1)).value = mytab[i];
+        document.getElementById('threebest').value = res;
+    }
+
+    function caracClear() {
+        document.getElementById('dice1').value = "";
+        document.getElementById('dice2').value = "";
+        document.getElementById('dice3').value = "";
+        document.getElementById('dice4').value = "";
+        document.getElementById('threebest').value = "";
+    }
+
+    function assignTo(stat) {
+        document.getElementById(stat).value = document.getElementById('threebest').value;
+    }
 
     
+    /*-----------------------------CHARACTER*/
     function displayCharacter() {
         const name = document.getElementById('name').value;
         const str = document.getElementById('str').value;
@@ -235,7 +277,7 @@
         console.log(s + " => " + String([nb, faces, pips]));
         return [nb, faces, pips];
     }
-
+                        
     function throwFourKeepThree() {
         mytab = [ roll(1,6,0),roll(1,6,0),roll(1,6,0),roll(1,6,0) ]
         console.log(mytab);
@@ -251,8 +293,9 @@
             }
         }
         console.log("Result = " + String(res))
-        return res;
+        return [res,mytab];
     }
+    
   </script>
 </body>
 </html>

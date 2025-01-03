@@ -25,7 +25,11 @@
             margin-top: 10px;
         }
         input[readonly] {
-            background-color:lightgrey;
+            background-color:#E8E8E8;
+        }
+        input.stat {
+            width: 25px;
+            text-align:center;
         }
     </style>
 </head>
@@ -48,16 +52,16 @@
       <button onclick="caracClear()">Clear</button>
 
       <div id="carac-display" class="carac-display">
-        <p><strong>Throws: </strong>
-          <input type="text" id="dice1" name="dice1" size="1" readonly>
-          <input type="text" id="dice2" name="dice2" size="1" readonly>
-          <input type="text" id="dice3" name="dice3" size="1" readonly>
-          <input type="text" id="dice4" name="dice4" size="1" readonly>
+        <p>Throws:
+          <input type="text" class="stat" id="dice1" name="dice1" readonly>
+          <input type="text" class="stat" id="dice2" name="dice2" readonly>
+          <input type="text" class="stat" id="dice3" name="dice3" readonly>
+          <input type="text" class="stat" id="dice4" name="dice4" readonly>
         </p>
-        <p><strong>Total of the 3 best: </strong>
-          <input type="text" id="threebest" name="threebest" size="4" readonly>
+        <p>Total of the 3 best:
+          <input type="text" class="stat" id="threebest" name="threebest"readonly>
       </div>
-      <p><strong>Assign to: </strong>
+      <p>Assign to:
         <button onclick="assignTo('str')">STR</button>
         <button onclick="assignTo('dex')">DEX</button>
         <button onclick="assignTo('mind')">MIND</button>
@@ -67,83 +71,181 @@
     <div class="section">
       <h2>Character Creation</h2>
       <label for="name">Name:</label>
-      <input type="text" id="name" name="name"><br><br>
-      <label for="str">STR:</label>
-      <input type="number" id="str" name="str" min="1"><br><br>
-      <label for="dex">DEX:</label>
-      <input type="number" id="dex" name="dex" min="1"><br><br>
-      <label for="mind">MIND:</label>
-      <input type="number" id="mind" name="mind" min="1"><br><br>
+      <input type="text" id="name" name="name">
+      <br><br>
+      <table>
+        <tr>
+          <td><label for="str">STR:</label></td>
+          <td><input type="number" class="stat" id="str" name="str" min="3" onchange="statChange('str');"></td>
+          <td></td>
+          <td><label for="strbonus">STR Bonus:</label></td>
+          <td><input type="number" class="stat" id="strbonus" name="strbonus" readonly></td>
+        </tr>
+        <tr>
+          <td><label for="dex">DEX:</label></td>
+          <td><input type="number" class="stat" id="dex" name="dex" min="3" onchange="statChange('dex');"></td>
+          <td></td>
+          <td><label for="dexbonus">DEX Bonus:</label></td>
+          <td><input type="number" class="stat" id="dexbonus" name="dexbonus" readonly></td>
+        </tr>
+        <tr>
+          <td><label for="mind">MIND:</label></td>
+          <td><input type="number" class="stat" id="mind" name="mind" min="3" onchange="statChange('mind');"></td>
+          <td></td>
+          <td><label for="dexbonus">MIND Bonus:</label></td>
+          <td><input type="number" class="stat" id="mindbonus" name="mindbonus" readonly></td>
+        </tr>
+      </table>
+      <br/>
       <button onclick="displayCharacter()">Display Character</button>
+      <button onclick="calculateStatBonuses()">Calculate Stat Bonuses</button>
+
+      <div id="character-display" class="character-display"></div>
+
       <button onclick="saveCharacter()">Save Character</button>
+
+      <p>Existing Character:
+        <input type="file" id="file-input" accept=".json">
+        <button onclick="loadCharacter()">Load Character</button>
+      </p>
     </div>
     
-    <!--*******************************************************************************-->
-    <div class="section">
-      <h2>Display Character</h2>
-      <div id="character-display" class="character-display"></div>
-    </div>
-    <!--*******************************************************************************-->
-    <div class="section">
-      <h2>Existing Character</h2>
-      <input type="file" id="file-input" accept=".json"><br><br>
-      <button onclick="loadCharacter()">Load Character</button>
-    </div>
-  </div>
   
-  <!--=================================================================================-->
-  <script>
-    /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-    /*           Graphical functions                                      */
-    /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    <!--=================================================================================-->
+    <script>
+      /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+      /*           Global variables and tools                               */
+      /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+      const VERBOSE = true;
 
-    /*-----------------------------DICE*/
-    function diceThrow() {
-        let diceFormula = document.getElementById('dice-formula').value;
-        if (diceFormula == "") {
-            console.log("Defaulting on 1d20");
-            diceFormula = "1d20";
-            document.getElementById('dice-formula').value = "1d20";
-        }
-        const formula = parseDice(diceFormula);
-        const myroll = roll(...formula);
-        
-        const diceDisplay = document.getElementById('dice-display');
-        diceDisplay.innerHTML = `
+      const myconsole = {
+          log : function(str) {
+              if (VERBOSE)
+                  console.log(str);
+          }
+      }
+
+      class PubSub {
+          constructor() {
+              this.map = {};//key=event, value= array of functions to be notified
+          }
+          publish(event, source="NOT SET") {
+              if ((typeof event != 'string') || (event == '')) {
+                  myconsole.log("Strange event " + String(event)
+                                + " coming from source: " + source
+                                + ". Skipping...");
+                  return;
+              }
+              let tab = this.map[event];
+              if (tab == undefined) {
+                  myconsole.log("The event " + String(event)
+                                + " has not been recorded by any source. Skipping...");
+                  return;
+              }
+              for (let elem of tab) {
+                  myconsole.log("Dispatch event to function to ${elem.name}");
+                  elem.call(event);
+              }
+          }
+          subscribe(event, f) {
+              if ((typeof event != 'string') || (event == '')) {
+                  myconsole.log("Strange event " + String(event)
+                                + ". Subscription recording failed.");
+                  return;
+               }
+              let tab = this.map[event];
+              if (tab == undefined) 
+                  tab[event] = [f];
+              else
+                  tab[event].push(f);
+              myconsole.log("Event ${event} recorded.");
+          }
+      }
+
+      const PUBSUB = new PubSub();
+
+      const STR_CHANGE = 1;
+            
+      
+      /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+      /*           Graphical functions                                      */
+      /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+      /*-----------------------------DICE*/
+      function diceThrow() {
+          let diceFormula = document.getElementById('dice-formula').value;
+          if (diceFormula == "") {
+              myconsole.log("Defaulting on 1d20");
+              diceFormula = "1d20";
+              document.getElementById('dice-formula').value = "1d20";
+          }
+          const formula = parseDice(diceFormula);
+          const myroll = roll(...formula);
+          
+          const diceDisplay = document.getElementById('dice-display');
+          diceDisplay.innerHTML = `
                <p><strong>Dice formula:</strong> ${diceFormula}</p>
                <p><strong>Dice formula decrypted:</strong> ${formula}</p>
                <p><strong>Result:</strong> ${myroll}</p>
           `;
-    }
+      }
 
-    function diceClear() {
-        document.getElementById('dice-formula').value = "";
-        document.getElementById('dice-display').innerHTML = "";
-    }
+      function diceClear() {
+          document.getElementById('dice-formula').value = "";
+          document.getElementById('dice-display').innerHTML = "";
+      }
+      
+      /*-----------------------------STATS*/
+      function throwFourKeepThreeGraphical() {
+          let res, mytab;
+          [res, mytab] = throwFourKeepThree();
+          for (let i = 0; i < mytab.length;i++)
+              document.getElementById('dice' + String(i+1)).value = mytab[i];
+          document.getElementById('threebest').value = res;
+      }
+      
+      function caracClear() {
+          document.getElementById('dice1').value = "";
+          document.getElementById('dice2').value = "";
+          document.getElementById('dice3').value = "";
+          document.getElementById('dice4').value = "";
+          document.getElementById('threebest').value = "";
+      }
+      
+      function assignTo(stat) {
+          document.getElementById(stat).value = document.getElementById('threebest').value;
+          //this function has to fire event manually
+          statChange(stat);
+      }
+      
+      /*-----------------------------CHARACTER*/
+      // Coupled with inputs
+      function statChange(stat){
+          myconsole.log("here");
+          let myval = document.getElementById(stat).value;
+          if (myval == "")
+              document.getElementById(stat + 'bonus').value = "";
+          else
+              document.getElementById(stat + 'bonus').value = statBonus(myval);
+      }
 
-    /*-----------------------------STATS*/
-    function throwFourKeepThreeGraphical() {
-        let res, mytab;
-        [res, mytab] = throwFourKeepThree();
-        for (let i = 0; i < mytab.length;i++)
-            document.getElementById('dice' + String(i+1)).value = mytab[i];
-        document.getElementById('threebest').value = res;
-    }
+      function calculateStatBonuses(){
+          if (document.getElementById('str').value == "")
+              document.getElementById('strbonus').value = "";
+          else
+              document.getElementById('strbonus').value = statBonus(document.getElementById('str').value);
+          if (document.getElementById('dex').value == "")
+              document.getElementById('dexbonus').value = "";
+          else
+              document.getElementById('dexbonus').value = statBonus(document.getElementById('dex').value);
+          if (document.getElementById('mind').value == "")
+              document.getElementById('mindbonus').value = "";
+          else
+              document.getElementById('mindbonus').value = statBonus(document.getElementById('mind').value);
+      }
 
-    function caracClear() {
-        document.getElementById('dice1').value = "";
-        document.getElementById('dice2').value = "";
-        document.getElementById('dice3').value = "";
-        document.getElementById('dice4').value = "";
-        document.getElementById('threebest').value = "";
-    }
-
-    function assignTo(stat) {
-        document.getElementById(stat).value = document.getElementById('threebest').value;
-    }
 
     
-    /*-----------------------------CHARACTER*/
     function displayCharacter() {
         const name = document.getElementById('name').value;
         const str = document.getElementById('str').value;
@@ -225,7 +327,7 @@
     }
 
     function notANumber(s,defo="0"){
-        console.log('"' + s + '" is not a number, replacing by: ' + defo);
+        myconsole.log('"' + s + '" is not a number, replacing by: ' + defo);
     }
     
     /*-------------------------------------------------
@@ -271,16 +373,16 @@
             }
         }
         else {
-            console.log('There is neither "d" nor "D" in the string to parse. Exiting function.');
+            myconsole.log('There is neither "d" nor "D" in the string to parse. Exiting function.');
             return false;
         }
-        console.log(s + " => " + String([nb, faces, pips]));
+        myconsole.log(s + " => " + String([nb, faces, pips]));
         return [nb, faces, pips];
     }
                         
     function throwFourKeepThree() {
         mytab = [ roll(1,6,0),roll(1,6,0),roll(1,6,0),roll(1,6,0) ]
-        console.log(mytab);
+        myconsole.log(mytab);
         var min = Math.min(...mytab);
         let alreadytaken = false;
         let res = 0
@@ -288,14 +390,19 @@
             if ((e == min) && (alreadytaken == false))
                 alreadytaken = true;
             else {
-                console.log("Taken: " + String(e))
+                myconsole.log("Taken: " + String(e))
                 res += e;
             }
         }
-        console.log("Result = " + String(res))
+        myconsole.log("Result = " + String(res))
         return [res,mytab];
     }
+
+      function statBonus(stat) { 
+          return Math.floor((stat-10)/2);
+      }
     
+
   </script>
 </body>
 </html>

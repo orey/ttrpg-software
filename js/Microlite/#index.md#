@@ -31,7 +31,7 @@ For the character zone
 * displayCharacterFromObject
 * saveCharacter
 * loadCharacter
-* ClearCharacter
+* clearCharacter
 
 ### Non graphical functions
 

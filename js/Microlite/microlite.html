@@ -1,437 +1,548 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microlite20</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .section {
-            margin-bottom: 20px;
-        }
-        .section h2 {
-            margin-bottom: 10px;
-        }
-        .character-display {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 10px;
-        }
-        input[readonly] {
-            background-color:#E8E8E8;
-        }
-        input.stat {
-            width: 25px;
-            text-align:center;
-        }
-    </style>
-</head>
-<body>
-  <div class="container">
-    <!--*******************************************************************************-->
-    <div class="section">
-      <h2>Dice thrower</h2>
-      <label for="dice-formula">Dice formula (xD+/-y):</label>
-      <input type="text" id="dice-formula" name="dice-formula"><br><br>
-      <button onclick="diceThrow()">Dice throw</button>
-      <button onclick="diceClear()">Clear</button>
-      
-      <div id="dice-display" class="dice-display"></div>
-    </div>
-    <!--*******************************************************************************-->
-    <div class="section">
-      <h2>Stats Determination</h2>
-      <button onclick="throwFourKeepThreeGraphical()">Throw 4D6 keep the best 3</button>
-      <button onclick="caracClear()">Clear</button>
+    <!-- To be used with web-mode in Emacs -->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Microlite20 Character Generator</title>
+        <style>
+         body {
+             font-family: Arial, sans-serif;
+             margin: 20px;
+         }
+         .container {
+             max-width: 600px;
+             margin: 0 auto;
+         }
+         .section {
+             margin-bottom: 20px;
+         }
+         .section h2 {
+             margin-bottom: 10px;
+         }
+         .character-display {
+             border: 1px solid #ccc;
+             padding: 10px;
+             margin-top: 10px;
+         }
+         input[readonly] {
+             background-color:#E8E8E8;
+         }
+         input.stat {
+             width: 25px;
+             text-align:center;
+         }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!--*******************************************************************************-->
+            <div class="section">
+                <h2>Dice thrower</h2>
+                <label for="dice-formula">Dice formula (xD+/-y):</label>
+                <input type="text" id="dice-formula" name="dice-formula"><br><br>
+                <button onclick="diceThrow()">Dice throw</button>
+                <button onclick="diceClear()">Clear</button>
 
-      <div id="carac-display" class="carac-display">
-        <p>Throws:
-          <input type="text" class="stat" id="dice1" name="dice1" readonly>
-          <input type="text" class="stat" id="dice2" name="dice2" readonly>
-          <input type="text" class="stat" id="dice3" name="dice3" readonly>
-          <input type="text" class="stat" id="dice4" name="dice4" readonly>
-        </p>
-        <p>Total of the 3 best:
-          <input type="text" class="stat" id="threebest" name="threebest"readonly>
-      </div>
-      <p>Assign to:
-        <button onclick="assignTo('str')">STR</button>
-        <button onclick="assignTo('dex')">DEX</button>
-        <button onclick="assignTo('mind')">MIND</button>
-      </p>
-    </div>
-    <!--*******************************************************************************-->
-    <div class="section">
-      <h2>Character Creation</h2>
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name">
-      <br><br>
-      <table>
-        <tr>
-          <td><label for="str">STR:</label></td>
-          <td><input type="number" class="stat" id="str" name="str" min="3" onchange="statChange('str');"></td>
-          <td></td>
-          <td><label for="strbonus">STR Bonus:</label></td>
-          <td><input type="number" class="stat" id="strbonus" name="strbonus" readonly></td>
-        </tr>
-        <tr>
-          <td><label for="dex">DEX:</label></td>
-          <td><input type="number" class="stat" id="dex" name="dex" min="3" onchange="statChange('dex');"></td>
-          <td></td>
-          <td><label for="dexbonus">DEX Bonus:</label></td>
-          <td><input type="number" class="stat" id="dexbonus" name="dexbonus" readonly></td>
-        </tr>
-        <tr>
-          <td><label for="mind">MIND:</label></td>
-          <td><input type="number" class="stat" id="mind" name="mind" min="3" onchange="statChange('mind');"></td>
-          <td></td>
-          <td><label for="dexbonus">MIND Bonus:</label></td>
-          <td><input type="number" class="stat" id="mindbonus" name="mindbonus" readonly></td>
-        </tr>
-      </table>
-      <br/>
-      <button onclick="displayCharacter()">Display Character</button>
-      <!-- Useless button now that withe events, the fields are automatically updated
-           <button onclick="calculateStatBonuses()">Calculate Stat Bonuses</button> -->
-      <textarea id="character-display" name="character-display" rows="10" cols="25" readonly>
-      </textarea> 
-      <button onclick="saveCharacter()">Save Character</button>
+                <div id="dice-display" class="dice-display"></div>
+            </div>
+            <!--*******************************************************************************-->
+            <div class="section">
+                <h2>Stats Determination</h2>
+                <button onclick="throwFourKeepThreeGraphical()">Throw 4D6 keep the best 3</button>
+                <button onclick="caracClear()">Clear</button>
 
-      <p>Existing Character:
-        <input type="file" id="file-input" accept=".json">
-        <button onclick="loadCharacter()">Load Character</button>
-      </p>
-    </div>
-    
-  
-    <!--=================================================================================-->
-    <script>
-      /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-      /*           Global variables and tools                               */
-      /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-      const VERBOSE = true;
+                <div id="carac-display" class="carac-display">
+                    <p>Throws:
+                        <input type="text" class="stat" id="dice1" name="dice1" readonly>
+                        <input type="text" class="stat" id="dice2" name="dice2" readonly>
+                        <input type="text" class="stat" id="dice3" name="dice3" readonly>
+                        <input type="text" class="stat" id="dice4" name="dice4" readonly>
+                    </p>
+                    <p>Total of the 3 best:
+                        <input type="text" class="stat" id="threebest" name="threebest"readonly>
+                </div>
+                <p>Assign to:
+                    <button onclick="assignTo('str')">STR</button>
+                    <button onclick="assignTo('dex')">DEX</button>
+                    <button onclick="assignTo('mind')">MIND</button>
+                </p>
+                <p><button onclick="generateCompleteCharacter()">Generate Complete Character</button></p>
+            </div>
+            <!--*******************************************************************************-->
+            <div class="section">
+                <h2>Character Creation</h2>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name">
+                <br><br>
+                <table>
+                    <tr>
+                        <td><label for="str">STR:</label></td>
+                        <td><input type="number" class="stat" id="str" name="str" min="3" onchange="statChange('str');"></td>
+                        <td></td>
+                        <td><label for="strbonus">STR Bonus:</label></td>
+                        <td><input type="number" class="stat" id="strbonus" name="strbonus" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><label for="dex">DEX:</label></td>
+                        <td><input type="number" class="stat" id="dex" name="dex" min="3" onchange="statChange('dex');"></td>
+                        <td></td>
+                        <td><label for="dexbonus">DEX Bonus:</label></td>
+                        <td><input type="number" class="stat" id="dexbonus" name="dexbonus" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><label for="mind">MIND:</label></td>
+                        <td><input type="number" class="stat" id="mind" name="mind" min="3" onchange="statChange('mind');"></td>
+                        <td></td>
+                        <td><label for="dexbonus">MIND Bonus:</label></td>
+                        <td><input type="number" class="stat" id="mindbonus" name="mindbonus" readonly></td>
+                    </tr>
+                </table>
+                <br/>
+                <button onclick="displayCharacter()">Display Character</button>
+                <!-- Useless button now that withe events, the fields are automatically updated
+                     <button onclick="calculateStatBonuses()">Calculate Stat Bonuses</button> -->
+                <textarea id="character-display" name="character-display" rows="10" cols="25" readonly>
+                </textarea>
+                <button onclick="saveCharacter()">Save Character</button>
 
-      const myconsole = {
-          log : function(str) {
-              if (VERBOSE)
-                  console.log(str);
-          }
-      }
-
-      class PubSub {
-          constructor() {
-              this.map = {};//key=event, value= array of functions to be notified
-          }
-          publish(event, source="NOT SET") {
-              if ((typeof event != 'string') || (event == '')) {
-                  myconsole.log("Strange event " + String(event)
-                                + " coming from source: " + source
-                                + ". Skipping...");
-                  return;
-              }
-              let tab = this.map[event];
-              if (tab == undefined) {
-                  myconsole.log("The event " + String(event)
-                                + " has not been recorded by any source. Skipping...");
-                  return;
-              }
-              for (let elem of tab) {
-                  myconsole.log("Dispatch event to function to ${elem.name}");
-                  elem.call(event);
-              }
-          }
-          subscribe(event, f) {
-              if ((typeof event != 'string') || (event == '')) {
-                  myconsole.log("Strange event " + String(event)
-                                + ". Subscription recording failed.");
-                  return;
-               }
-              let tab = this.map[event];
-              if (tab == undefined) 
-                  tab[event] = [f];
-              else
-                  tab[event].push(f);
-              myconsole.log("Event ${event} recorded.");
-          }
-      }
-
-      const PUBSUB = new PubSub();
-
-      const STR_CHANGE = 1;
-            
-      
-      /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-      /*           Graphical functions                                      */
-      /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
-      /*-----------------------------DICE*/
-      function diceThrow() {
-          let diceFormula = document.getElementById('dice-formula').value;
-          if (diceFormula == "") {
-              myconsole.log("Defaulting on 1d20");
-              diceFormula = "1d20";
-              document.getElementById('dice-formula').value = "1d20";
-          }
-          const formula = parseDice(diceFormula);
-          const myroll = roll(...formula);
-          
-          const diceDisplay = document.getElementById('dice-display');
-          diceDisplay.innerHTML = `
-               <p><strong>Dice formula:</strong> ${diceFormula}</p>
-               <p><strong>Dice formula decrypted:</strong> ${formula}</p>
-               <p><strong>Result:</strong> ${myroll}</p>
-          `;
-      }
-
-      function diceClear() {
-          document.getElementById('dice-formula').value = "";
-          document.getElementById('dice-display').innerHTML = "";
-      }
-      
-      /*-----------------------------STATS*/
-      function throwFourKeepThreeGraphical() {
-          let res, mytab;
-          [res, mytab] = throwFourKeepThree();
-          for (let i = 0; i < mytab.length;i++)
-              document.getElementById('dice' + String(i+1)).value = mytab[i];
-          document.getElementById('threebest').value = res;
-      }
-      
-      function caracClear() {
-          document.getElementById('dice1').value = "";
-          document.getElementById('dice2').value = "";
-          document.getElementById('dice3').value = "";
-          document.getElementById('dice4').value = "";
-          document.getElementById('threebest').value = "";
-      }
-      
-      function assignTo(stat) {
-          document.getElementById(stat).value = document.getElementById('threebest').value;
-          //this function has to fire event manually
-          statChange(stat);
-      }
-      
-      /*-----------------------------CHARACTER*/
-      // Coupled with inputs
-      function statChange(stat){
-          myconsole.log("here");
-          let myval = document.getElementById(stat).value;
-          if (myval == "")
-              document.getElementById(stat + 'bonus').value = "";
-          else
-              document.getElementById(stat + 'bonus').value = statBonus(myval);
-      }
-
-      function calculateStatBonuses(){
-          if (document.getElementById('str').value == "")
-              document.getElementById('strbonus').value = "";
-          else
-              document.getElementById('strbonus').value = statBonus(document.getElementById('str').value);
-          if (document.getElementById('dex').value == "")
-              document.getElementById('dexbonus').value = "";
-          else
-              document.getElementById('dexbonus').value = statBonus(document.getElementById('dex').value);
-          if (document.getElementById('mind').value == "")
-              document.getElementById('mindbonus').value = "";
-          else
-              document.getElementById('mindbonus').value = statBonus(document.getElementById('mind').value);
-      }
+                <p>Existing Character:
+                    <input type="file" id="file-input" accept=".json">
+                    <button onclick="loadCharacter()">Load Character</button>
+                </p>
+            </div>
 
 
-    
-    function displayCharacter() {
-        const name = document.getElementById('name').value;
-        const str = document.getElementById('str').value;
-        const dex = document.getElementById('dex').value;
-        const mind = document.getElementById('mind').value;
-        const perso = new Character(name, str, dex, mind);
-        
-        const characterDisplay = document.getElementById('character-display');
-        //characterDisplay.innerHTML = perso.print();
-        characterDisplay.innerHTML = `${perso.toJSON()}`;
-    }
-    
-    function saveCharacter() {
-        const name = document.getElementById('name').value;
-        const str = document.getElementById('str').value;
-        const dex = document.getElementById('dex').value;
-        const mind = document.getElementById('mind').value;
-        const perso = new Character(name, str, dex, mind);
+            <!--=================================================================================-->
+            <script>
+             /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+             /*           Global variables and tools                               */
+             /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+             const VERBOSE = true;
 
-        /*const character = {
-            name: name,
-            str: parseInt(str),
-            dex: parseInt(dex),
-            mind: parseInt(mind)
-        };
+             const myconsole = {
+                 log : function(str) {
+                     if (VERBOSE)
+                         console.log(str);
+                 }
+             }
 
-        const jsonString = JSON.stringify(character, null, 2);*/
-        const jsonString = perso.toJSON();
-        
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${name}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
-    
-    function loadCharacter() {
-        const fileInput = document.getElementById('file-input');
-        const file = fileInput.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const character = JSON.parse(e.target.result);
-                document.getElementById('name').value = character.name;
-                document.getElementById('str').value = character.str;
-                document.getElementById('dex').value = character.dex;
-                document.getElementById('mind').value = character.mind;
-                displayCharacter();
-            };
-            reader.readAsText(file);
-        }
-    }
+             class PubSub {
+                 constructor() {
+                     this.map = {};//key=event, value= array of functions to be notified
+                 }
+                 publish(event, source="NOT SET") {
+                     if ((typeof event != 'string') || (event == '')) {
+                         myconsole.log("Strange event " + String(event)
+                                     + " coming from source: " + source
+                                     + ". Skipping...");
+                         return;
+                     }
+                     let tab = this.map[event];
+                     if (tab == undefined) {
+                         myconsole.log("The event " + String(event)
+                                     + " has not been recorded by any source. Skipping...");
+                         return;
+                     }
+                     for (let elem of tab) {
+                         myconsole.log("Dispatch event to function to ${elem.name}");
+                         elem.call(event);
+                     }
+                 }
+                 subscribe(event, f) {
+                     if ((typeof event != 'string') || (event == '')) {
+                         myconsole.log("Strange event " + String(event)
+                                     + ". Subscription recording failed.");
+                         return;
+                     }
+                     let tab = this.map[event];
+                     if (tab == undefined)
+                         tab[event] = [f];
+                     else
+                         tab[event].push(f);
+                     myconsole.log("Event ${event} recorded.");
+                 }
+             }
 
-    /**********************************************************************/
-    /*           Non graphical functions                                  */
-    /**********************************************************************/
-    
-    /*=============================================================
-      Dice section
-      =============================================================*/
+             const PUBSUB = new PubSub();
 
-    // Random function
-    function rollDie(faces){
-        return Math.floor((Math.random()*faces)+1);
-    }
+             /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+             /*           Graphical functions                                      */
+             /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-    // Dice roller
-    function roll(number, faces, pips){
-        let result = pips;
-        let temp = 0;
-        for (let i=0;i<number;i++){
-            temp = rollDie(faces);
-            result += temp;
-        }
-        return result;
-    }
+             /*================================================================DICE*/
+             function diceThrow() {
+                 let diceFormula = document.getElementById('dice-formula').value;
+                 if (diceFormula == "") {
+                     myconsole.log("Defaulting on 1d20");
+                     diceFormula = "1d20";
+                     document.getElementById('dice-formula').value = "1d20";
+                 }
+                 const formula = parseDice(diceFormula);
+                 const myroll = roll(...formula);
 
-    function notANumber(s,defo="0"){
-        myconsole.log('"' + s + '" is not a number, replacing by: ' + defo);
-    }
-    
-    /*-------------------------------------------------
-      Expected input is "2d6+3" or "4d10"
-     -------------------------------------------------*/
-    function parseDice(s){
-        let nb = 0, faces = 0, pips = 0;
-        let dice = "";
-        // Is there a pip?
-        if ((s.includes("+")) || (s.includes("-")) ) {
-            let temp;
-            if (s.includes("+")) {
-                temp = s.split("+");
-                pips = parseInt(temp[1]);
-            }
-            if (s.includes("-")){
-                temp = s.split("-");
-                pips = parseInt('-' + temp[1]);
-            }
-            if (isNaN(pips)){
-                notANumber(temp[1],"0");
-                pips = 0;
-            }
-            dice = temp[0];
-        }
-        else 
-            dice = s;
-        if ((dice.includes("d")) || (dice.includes("D"))) {
-            let temp;
-            if (dice.includes("d"))
-                temp = dice.split("d");
-            if (dice.includes("D"))
-                temp = dice.split("D");
-            nb = parseInt(temp[0]);
-            if (isNaN(nb)) {
-                nb = 1;
-                notANumber(temp[0],"1");
-            }
-            faces = parseInt(temp[1]);
-            if (isNaN(faces)) {
-                faces = 6;
-                notANumber(temp[1],"6");
-            }
-        }
-        else {
-            myconsole.log('There is neither "d" nor "D" in the string to parse. Exiting function.');
-            return false;
-        }
-        myconsole.log(s + " => " + String([nb, faces, pips]));
-        return [nb, faces, pips];
-    }
-                        
-    function throwFourKeepThree() {
-        mytab = [ roll(1,6,0),roll(1,6,0),roll(1,6,0),roll(1,6,0) ]
-        myconsole.log(mytab);
-        var min = Math.min(...mytab);
-        let alreadytaken = false;
-        let res = 0
-        for (let e of mytab) {
-            if ((e == min) && (alreadytaken == false))
-                alreadytaken = true;
-            else {
-                myconsole.log("Taken: " + String(e))
-                res += e;
-            }
-        }
-        myconsole.log("Result = " + String(res))
-        return [res,mytab];
-    }
+                 const diceDisplay = document.getElementById('dice-display');
+                 diceDisplay.innerHTML = `
+                     <p><strong>Dice formula:</strong> ${diceFormula}</p>
+                     <p><strong>Dice formula decrypted:</strong> ${formula}</p>
+                     <p><strong>Result:</strong> ${myroll}</p>
+                 `;
+             }
 
-      function statBonus(stat) { 
-          return Math.floor((stat-10)/2);
-      }
+             function diceClear() {
+                 document.getElementById('dice-formula').value = "";
+                 document.getElementById('dice-display').innerHTML = "";
+             }
+
+             /**================================================================STATS*/
+             function throwFourKeepThreeGraphical() {
+                 let res, mytab;
+                 [res, mytab] = throwFourKeepThree();
+                 for (let i = 0; i < mytab.length;i++) {
+                     document.getElementById('dice' + String(i+1)).value = mytab[i];
+		 }
+                 document.getElementById('threebest').value = res;
+             }
+
+             function caracClear() {
+                 document.getElementById('dice1').value = "";
+                 document.getElementById('dice2').value = "";
+                 document.getElementById('dice3').value = "";
+                 document.getElementById('dice4').value = "";
+                 document.getElementById('threebest').value = "";
+             }
+
+             function assignTo(stat) {
+                 document.getElementById(stat).value = document.getElementById('threebest').value;
+                 //this function has to fire event manually
+                 statChange(stat);
+             }
+
+             /*============================================================CHARACTER*/
+             // Coupled with inputs
+             function statChange(stat){
+                 myconsole.log("Changing " + stat);
+                 let myval = document.getElementById(stat).value;
+                 if (stat == 'name')
+                     return;
+                 if ((myval == "") || (myval == 0))
+                     document.getElementById(stat + 'bonus').value = "";
+                 else
+                     document.getElementById(stat + 'bonus').value = statBonus(myval);
+             }
+
+             function calculateStatBonuses(){
+                 if (document.getElementById('str').value == "")
+                     document.getElementById('strbonus').value = "";
+                 else
+                     document.getElementById('strbonus').value = statBonus(document.getElementById('str').value);
+                 if (document.getElementById('dex').value == "")
+                     document.getElementById('dexbonus').value = "";
+                 else
+                     document.getElementById('dexbonus').value = statBonus(document.getElementById('dex').value);
+                 if (document.getElementById('mind').value == "")
+                     document.getElementById('mindbonus').value = "";
+                 else
+                     document.getElementById('mindbonus').value = statBonus(document.getElementById('mind').value);
+             }
+
+             function generateCompleteCharacter() {
+                 const perso = new Character(generateNom("*-*-*- de la *-*--"),
+                                             throwFourKeepThree()[0],
+                                             throwFourKeepThree()[0],
+                                             throwFourKeepThree()[0]);
+                 displayCharacterFromObject(perso);
+             }
 
 
-      class Character {
-          constructor(name, str, dex, mind) {
-              this.name = name;
-              this.str = str; // int so is the rest
-              this.dex = dex;
-              this.mind = mind;
-              this.strbonus = statBonus(this.str);
-              this.dexbonus = statBonus(this.dex);
-              this.mindbonus = statBonus(this.mind);
-          }
-          print() {
-              return `<p><strong>Name:</strong> ${this.name}</p>
+             function displayCharacter() {
+                 const name = document.getElementById('name').value;
+                 const str = document.getElementById('str').value;
+                 const dex = document.getElementById('dex').value;
+                 const mind = document.getElementById('mind').value;
+                 const perso = new Character(name, str, dex, mind);
+
+                 const characterDisplay = document.getElementById('character-display');
+                 //characterDisplay.innerHTML = perso.print();
+                 characterDisplay.innerHTML = `${perso.toJSON()}`;
+             }
+
+             function displayCharacterFromObject(perso) {
+                 document.getElementById('name').value = perso.name;
+                 document.getElementById('str').value = perso.str;
+                 document.getElementById('dex').value = perso.dex;
+                 document.getElementById('mind').value = perso.mind;
+                 statChange('name');
+                 statChange('str');
+                 statChange('dex');
+                 statChange('mind');
+
+                 const characterDisplay = document.getElementById('character-display');
+                 //characterDisplay.innerHTML = perso.print();
+                 characterDisplay.innerHTML = `${perso.toJSON()}`;
+             }
+
+             function saveCharacter() {
+                 let name = document.getElementById('name').value;
+                 if (name == '')
+                     name = 'John Doe';
+                 const str = document.getElementById('str').value;
+                 const dex = document.getElementById('dex').value;
+                 const mind = document.getElementById('mind').value;
+                 const perso = new Character(name, str, dex, mind);
+
+                 /*const character = {
+                    name: name,
+                    str: parseInt(str),
+                    dex: parseInt(dex),
+                    mind: parseInt(mind)
+                    };
+
+                    const jsonString = JSON.stringify(character, null, 2);*/
+                 const jsonString = perso.toJSON();
+
+                 const blob = new Blob([jsonString], { type: 'application/json' });
+                 const url = URL.createObjectURL(blob);
+                 const a = document.createElement('a');
+                 a.href = url;
+                 a.download = `${name}.json`;
+                 document.body.appendChild(a);
+                 a.click();
+                 document.body.removeChild(a);
+             }
+
+             function loadCharacter() {
+                 const fileInput = document.getElementById('file-input');
+                 const file = fileInput.files[0];
+                 if (file) {
+                     const reader = new FileReader();
+                     reader.onload = function(e) {
+                         const character = JSON.parse(e.target.result);
+                         const perso = new Character(
+                             character.name,
+                             character.str,
+                             character.dex,
+                             character.mind
+                         );
+                         displayCharacterFromObject(perso);
+                     };
+                     reader.readAsText(file);
+                 }
+             }
+
+             /**********************************************************************/
+             /*           Non graphical functions                                  */
+             /**********************************************************************/
+
+             /*========================================================Dice section*/
+
+             // Random function
+             function rollDie(faces){
+                 return Math.floor((Math.random()*faces)+1);
+             }
+
+             // Dice roller
+             function roll(number, faces, pips){
+                 let result = pips;
+                 let temp = 0;
+                 for (let i=0;i<number;i++){
+                     temp = rollDie(faces);
+                     result += temp;
+                 }
+                 return result;
+             }
+
+             function notANumber(s,defo="0"){
+                 myconsole.log('"' + s + '" is not a number, replacing by: ' + defo);
+             }
+
+             /*-------------------------------------------------
+                Expected input is "2d6+3" or "4d10"
+                -------------------------------------------------*/
+             function parseDice(s){
+                 let nb = 0, faces = 0, pips = 0;
+                 let dice = "";
+                 // Is there a pip?
+                 if ((s.includes("+")) || (s.includes("-")) ) {
+                     let temp;
+                     if (s.includes("+")) {
+                         temp = s.split("+");
+                         pips = parseInt(temp[1]);
+                     }
+                     if (s.includes("-")){
+                         temp = s.split("-");
+                         pips = parseInt('-' + temp[1]);
+                     }
+                     if (isNaN(pips)){
+                         notANumber(temp[1],"0");
+                         pips = 0;
+                     }
+                     dice = temp[0];
+                 }
+                 else
+                     dice = s;
+                 if ((dice.includes("d")) || (dice.includes("D"))) {
+                     let temp;
+                     if (dice.includes("d"))
+                         temp = dice.split("d");
+                     if (dice.includes("D"))
+                         temp = dice.split("D");
+                     nb = parseInt(temp[0]);
+                     if (isNaN(nb)) {
+                         nb = 1;
+                         notANumber(temp[0],"1");
+                     }
+                     faces = parseInt(temp[1]);
+                     if (isNaN(faces)) {
+                         faces = 6;
+                         notANumber(temp[1],"6");
+                     }
+                 }
+                 else {
+                     myconsole.log('There is neither "d" nor "D" in the string to parse. Exiting function.');
+                     return false;
+                 }
+                 myconsole.log(s + " => " + String([nb, faces, pips]));
+                 return [nb, faces, pips];
+             }
+
+             function throwFourKeepThree() {
+                 mytab = [ roll(1,6,0),roll(1,6,0),roll(1,6,0),roll(1,6,0) ]
+                 myconsole.log(mytab);
+                 var min = Math.min(...mytab);
+                 let alreadytaken = false;
+                 let res = 0
+                 for (let e of mytab) {
+                     if ((e == min) && (alreadytaken == false))
+                         alreadytaken = true;
+                     else {
+                         myconsole.log("Taken: " + String(e))
+                         res += e;
+                     }
+                 }
+                 myconsole.log("Result = " + String(res))
+                 return [res,mytab];
+             }
+
+             /*========================================================Game section*/
+             function statBonus(stat) {
+                 return Math.floor((stat-10)/2);
+             }
+
+
+             class Character {
+                 constructor(name, str, dex, mind) {
+                     this.name = name;
+                     this.str = str; // int so is the rest
+                     this.dex = dex;
+                     this.mind = mind;
+                     this.strbonus = statBonus(this.str);
+                     this.dexbonus = statBonus(this.dex);
+                     this.mindbonus = statBonus(this.mind);
+                 }
+                 print() {
+                     return `<p><strong>Name:</strong> ${this.name}</p>
                       <p><strong>STR:</strong> ${this.str} - STR Bonus: ${this.strbonus}</p>
                       <p><strong>DEX:</strong> ${this.dex} - DEX Bonus: ${this.dexbonus}</p>
                       <p><strong>MIND:</strong> ${this.mind} - MIND Bonus: ${this.mindbonus}</p>`;
-          }
-          toJSON() {
-              return '{"version":1'
-                  + ',"name":"' + this.name
-                  + ',"str":'   + this.str
-                  + ',"dex":'   + this.dex
-                  + ',"mind":'  + this.mind
-                  + ',"strbonus":' + this.strbonus
-                  + '"dexbonus":'  + this.dexbonus
-                  + '"mindbonus":' + this.mindbonus
-                  + '}';
-          }
-      }
+                 }
+                 toJSON() {
+                     return '{"version":1'
+                          + ',"name":"' + this.name
+                          + ',"str":'   + this.str
+                          + ',"dex":'   + this.dex
+                          + ',"mind":'  + this.mind
+                          + ',"strbonus":' + this.strbonus
+                          + '"dexbonus":'  + this.dexbonus
+                          + '"mindbonus":' + this.mindbonus
+                          + '}';
+                 }
+             }
 
-  </script>
-</body>
+             /*=============================================================Names*/
+             const CONSONNES=[
+                 'b',
+                 'c','c',
+                 'd','d','d',
+                 'f',
+                 'g',
+                 'h',
+                 'j',
+                 'k',
+                 'l','l','l',
+                 'm',
+                 'n','n',
+                 'p',
+                 'q',
+                 'r','r','r','r','r','r','r','r','r','r',
+                 's','s','s','s','s','s','s','s','s','s','s','s',
+                 't','t','t','t','t','t','t','t','t',
+                 'v',
+                 'w',
+                 'x',
+                 'z'
+             ];
+             const DOUBLES=[
+                 'll','ll',
+                 'mm','mm',
+                 'nn','nn',
+                 'rr','rr',
+                 'ss','ss',
+                 'tt','tt',
+             ];
+             const VOYELLES=[
+                 'a','a','a','a','a','a','a','a','a','a','a',
+                 'e','e','e','e','e','e','e','e','e','e','e','e','e',
+                 'i','i','i','i','i','i','i','i',
+                 'o','o','o','o',
+                 'u','u','u','u','u','u',
+                 'y'
+             ];
+
+             function getLetter(l) {
+                 let nb = l.length;
+                 return l[Math.floor((Math.random()*nb))];
+             }
+
+             function capFirst(s) {
+                 const elems = s.split(' ');
+                 let acc = ""
+                 for (e of elems) {
+                     acc += e.charAt(0).toUpperCase() +e.slice(1);
+                     acc += ' ';
+                 }
+                 return acc.trim();
+             }
+
+             /*
+                '*' consonne
+                '$' voyelle
+                '&' double consonne
+              */
+             function generateNom(s) {
+                 let temp = "";
+                 for (let c of s) {
+                     switch(c){
+                         case '*':
+                             temp += getLetter(CONSONNE);
+                             break;
+                         case '$':
+                             temp += getLetter(VOYELLE);
+                             break;
+                         case '&':
+                             temp += getLetter(DOUBLE);
+                             break;
+                         case ' ':
+                             temp += ' ';
+                             break;
+                         default:
+                             temp += c;
+                             break;
+                     }
+                 }
+                 return capFirst(temp);
+             }
+
+            </script>
+    </body>
 </html>

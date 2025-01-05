@@ -3,7 +3,7 @@
    ---------------------------*/
 'using strict;'
 
-const Name = require('./nom.js');
+const Name = require('./name-fr.js');
 
 function die(nb) {
     return Math.floor(Math.random() * nb) + 1;

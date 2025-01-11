@@ -99,17 +99,22 @@
                     </tr>
                 </table>
                 <br/>
-                <button onclick="displayCharacter()">Display Character</button>
-                <!-- Useless button now that withe events, the fields are automatically updated
-                     <button onclick="calculateStatBonuses()">Calculate Stat Bonuses</button> -->
-                <textarea id="character-display" name="character-display" rows="10" cols="25" readonly>
-                </textarea>
-             
+                <div>
+                    <input type="radio" id="jsondisplay" name="fav_display" value="jsondisplay" checked="checked">
+                    <label for="html">JSON</label>
+                    <input type="radio" id="textdisplay" name="fav_display" value="textdisplay">
+                    <label for="css">Text</label><br>
+                    <button onclick="displayCharacter()">Display Character</button>
+                </div>
+                <hr/>
+                <div id="character-display" name="character-display syle="max-width: 50px;"></div>
+                <hr/>
+
                 <button onclick="saveCharacter()">Save Character</button>
                 <button onclick="clearCharacter()">Clear Character</button>
-                
-                <p>Existing Character:
-                    <input type="file" id="file-input" accept=".json">
+
+                <p>Existing Character:<br/>
+                    <input type="file" id="file-input" accept=".json"><br/>
                     <button onclick="loadCharacter()">Load Character</button>
                 </p>
             </div>
@@ -249,7 +254,7 @@
              }
              
              function generateCompleteCharacter() {
-                 const perso = new Character(generateNom("*$*$*$ d'$&*$$"),
+                 const perso = new Character(generateNom("$*$*$* d'*&*$*$"),
                                              throwFourKeepThree()[0],
                                              throwFourKeepThree()[0],
                                              throwFourKeepThree()[0]);
@@ -267,8 +272,17 @@
                  const perso = new Character(name, str, dex, mind);
                  
                  const characterDisplay = document.getElementById('character-display');
-                 //characterDisplay.innerHTML = perso.print();
-                 characterDisplay.innerHTML = `${perso.toJSON()}`;
+                 
+                 const myformats = document.getElementsByName('fav_display');
+                 let theformat = '';
+                 for (let i = 0; i < myformats.length; i++) {
+                     if (myformats[i].checked)
+                         theformat = myformats[i].value;
+                 }
+                 if (theformat == 'jsondisplay')
+                     characterDisplay.innerHTML = JsonSerializer(perso, true);
+                 else
+                     characterDisplay.innerHTML = characterToHtml(perso);
              }
 
              function displayCharacterFromObject(perso) {
@@ -282,8 +296,17 @@
                  statChange('mind');
 
                  const characterDisplay = document.getElementById('character-display');
-                 //characterDisplay.innerHTML = perso.print();
-                 characterDisplay.innerHTML = `${perso.toJSON()}`;
+                 
+                 const myformats = document.getElementsByName('fav_display');
+                 let theformat = '';
+                 for (let i = 0; i < myformats.length; i++) {
+                     if (myformats[i].checked)
+                         theformat = myformats[i].value;
+                 }
+                 if (theformat == 'jsondisplay')
+                     characterDisplay.innerHTML = JsonSerializer(perso, true);
+                 else
+                     characterDisplay.innerHTML = characterToHtml(perso);
              }
 
              function saveCharacter() {
@@ -295,16 +318,8 @@
                  const mind = document.getElementById('mind').value;
                  const perso = new Character(name, str, dex, mind);
 
-                 /*const character = {
-                    name: name,
-                    str: parseInt(str),
-                    dex: parseInt(dex),
-                    mind: parseInt(mind)
-                    };
-
-                    const jsonString = JSON.stringify(character, null, 2);*/
-                 const jsonString = perso.toJSON();
-
+                 const jsonString = JsonSerializer(perso);
+                 // Managing the download
                  const blob = new Blob([jsonString], { type: 'application/json' });
                  const url = URL.createObjectURL(blob);
                  const a = document.createElement('a');
@@ -322,13 +337,7 @@
                      const reader = new FileReader();
                      reader.onload = function(e) {
                          myconsole.log(e.target.result);
-                         const character = JSON.parse(e.target.result);
-                         const perso = new Character(
-                             character.name,
-                             character.str,
-                             character.dex,
-                             character.mind
-                         );
+                         const perso = JsonReader(e.target.result);
                          displayCharacterFromObject(perso);
                      };
                      reader.readAsText(file);
@@ -345,11 +354,18 @@
                  statChange('dex');
                  statChange('mind');
                  const characterDisplay = document.getElementById('character-display');
-                 //characterDisplay.innerHTML = perso.print();
+                 //characterDisplay.innerHTML = characterToHtml(perso);
                  characterDisplay.innerHTML = "";
 
              }
 
+             function characterToHtml(perso) {
+                 return `<p><strong>Name:</strong> ${perso.name}</p>
+                      <p><strong>STR:</strong> ${perso.str} - STR Bonus: ${perso.strbonus}</p>
+                      <p><strong>DEX:</strong> ${perso.dex} - DEX Bonus: ${perso.dexbonus}</p>
+                      <p><strong>MIND:</strong> ${perso.mind} - MIND Bonus: ${perso.mindbonus}</p>`;
+             }
+             
              /**********************************************************************/
              /*           Non graphical functions                                  */
              /**********************************************************************/
@@ -449,7 +465,8 @@
                  return Math.floor((stat-10)/2);
              }
 
-
+             
+             /*========================================================Character*/
              class Character {
                  constructor(name, str, dex, mind) {
                      this.name = name;
@@ -477,6 +494,30 @@
                           + '"mindbonus" :'  + this.mindbonus
                           + '}';
                  }
+             }
+
+             function JsonSerializer(perso,display=false) {
+                 return (display ? '<pre>' : '')
+                      + '{"version":1,' + (display ? '\n' : '')
+                      + '"name":"'      + perso.name + '",' + (display ? '\n' : '')
+                      + '"str":'        + perso.str + ',' + (display ? '\n' : '')
+                      + '"dex":'        + perso.dex + ',' + (display ? '\n' : '')
+                      + '"mind":'       + perso.mind + ',' + (display ? '\n' : '')
+                      + '"strbonus":'   + perso.strbonus + ',' + (display ? '\n' : '')
+                      + '"dexbonus":'   + perso.dexbonus + ',' + (display ? '\n' : '')
+                      + '"mindbonus":'  + perso.mindbonus
+                      + '}'
+                      + (display ? '</pre>' : '');
+             }
+
+             function JsonReader(s){
+                 const obj = JSON.parse(s);
+                 return new Character(
+                     obj.name,
+                     obj.str,
+                     obj.dex,
+                     obj.mind
+                 );
              }
 
              /*=============================================================Names*/
@@ -546,18 +587,18 @@
              }
 
              /*
-                '*' consonne
-                '$' voyelle
+                '$' consonne
+                '*' voyelle
                 '&' double consonne
               */
              function generateNom(s) {
                  let temp = "";
                  for (let c of s) {
                      switch(c){
-                         case '*':
+                         case '$':
                              temp += getLetter(CONSONNE);
                              break;
-                         case '$':
+                         case '*':
                              temp += getLetter(VOYELLE);
                              break;
                          case '&':

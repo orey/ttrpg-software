@@ -32,6 +32,7 @@ For the character zone
 * saveCharacter
 * loadCharacter
 * clearCharacter
+* characterToHtml
 
 ### Non graphical functions
 
@@ -48,6 +49,8 @@ Game section
 
 * statBonus
 * class Character - this class can serialize itself in JSON and in html
+* JsonSerializer: takes an instance of Character and generates the json for the file saving. If true is provided, adds a '\n' at the end of each line.
+* JsonReader: returns an instance of Character
 
 Name section
 

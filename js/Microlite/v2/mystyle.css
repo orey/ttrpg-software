@@ -1,0 +1,26 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+.section {
+    margin-bottom: 20px;
+}
+.section h2 {
+    margin-bottom: 10px;
+}
+.character-display {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+}
+input[readonly] {
+    background-color:#E8E8E8;
+}
+input.stat {
+    width: 25px;
+    text-align:center;
+}

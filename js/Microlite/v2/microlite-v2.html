@@ -10,10 +10,12 @@
     <body>
         <div class="container">
             <!-- "data-*" is a valid custom html attribute -->
-            <div class="section" id="dice-thrower1" data-type="DiceThrower">
-            </div>
-            <div class="section" id="dice-thrower2" data-type="DiceThrower">
-            </div>
+            <div class="section" id="dice-thrower1" data-type="DiceThrower"></div>
+            <div class="section" id="dice-thrower2" data-type="DiceThrower"></div>
+        </div>
+        <div class="container">
+            <button onclick="construct()">Construct</button>
+            <button onclick="destroy()">Destroy</button>
         </div>
         <script type="text/javascript" src="utils.js"></script>
         <script type="text/javascript" src="dice.js"></script>

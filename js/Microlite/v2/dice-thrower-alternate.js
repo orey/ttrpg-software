@@ -1,13 +1,6 @@
 "use strict";
 
-class DiceThrower {
-    constructor(id){
-        this.id = id;
-        this.elem = document.getElementById(id);
-        // Names of attributes must be relative if we have a real component
-        this.formula = DiceThrower.formulaField(id);
-        this.display = DiceThrower.displayField(id);
-        this.elem.innerHTML = 
+const DICE_THROWER_ALTERNATE =
 `<h2>Dice thrower</h2>
 <label for="${this.formula}">Dice formula (xD+/-y):</label>
 <input type="text" id="${this.formula}" name="${this.formula}"><br><br>
@@ -15,6 +8,16 @@ class DiceThrower {
 <button onclick="diceClear('${id}')">Clear</button>
 
 <hr><div id="${this.display}" class="${this.display}"></div><hr>`;
+      
+
+class DiceThrowerAlternate {
+    constructor(id){
+        this.id = id;
+        this.elem = document.getElementById(id);
+        // Names of attributes must be relative if we have a real component
+        this.formula = DiceThrower.formulaField(id);
+        this.display = DiceThrower.displayField(id);
+        this.elem.innerHTML = DICE_THROWER_ALTERNATE;
         myconsole.log(`Type = dice-thrower, id = ${id}`);
     }
     static formulaField(id) {
@@ -22,9 +25,6 @@ class DiceThrower {
     }
     static displayField(id) {
         return "dice-display" + "-" + id;
-    }
-    destroy() {
-        this.elem.innerHTML = "";
     }
 
 }

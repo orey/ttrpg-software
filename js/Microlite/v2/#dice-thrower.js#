@@ -39,7 +39,7 @@ class DiceThrower {
     }
     destroy() {
         this.pubsub.publish("CONTROL",
-                            {message: "About to be destroyed..."});
+                            {message: "DiceThrower " + String(id) + " about to be destroyed..."});
         this.elem.innerHTML = "";
     }
     

@@ -12,15 +12,23 @@
             <!-- "data-*" is a valid custom html attribute -->
             <div class="section" id="dice-thrower1" data-type="DiceThrower"></div>
             <div class="section" id="dice-thrower2" data-type="DiceThrower"></div>
+            <div class="section" id="stats-deter1" data-type="StatsDetermination"></div>
+            <div class="section" id="stats-deter2" data-type="StatsDetermination"></div>
         </div>
+        <!-- Linked to controller -->
         <div class="container">
             <button onclick="construct()">Construct</button>
             <button onclick="destroy()">Destroy</button>
         </div>
+        <!-- Utils in order of dependencies -->
         <script type="text/javascript" src="utils.js"></script>
         <script type="text/javascript" src="pubsub.js"></script>
+        <!-- Dice throwing in order of dependencies -->
         <script type="text/javascript" src="dice.js"></script>
         <script type="text/javascript" src="dice-thrower.js"></script>
+        <!-- Stats determination in order of dependencies -->
+        <script type="text/javascript" src="stats-determination.js"></script>
+        <!-- Controller -->
         <script type="text/javascript" src="controler.js"></script>
     </body>
 </html>

@@ -30,6 +30,9 @@ function construct() {
     //future : parse a selected area and create in a loop
     mycontroller.constructGraphicalElement("dice-thrower1");
     mycontroller.constructGraphicalElement("dice-thrower2");
+    mycontroller.constructGraphicalElement("stats-deter1");
+    mycontroller.constructGraphicalElement("stats-deter2");
+    
 }
 
 function destroy() {

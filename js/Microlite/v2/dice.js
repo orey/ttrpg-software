@@ -71,3 +71,23 @@ function parseDice(s){
     myconsole.log(s + " => " + String([nb, faces, pips]));
     return [nb, faces, pips];
 }
+
+function throwFourKeepThree() {
+    mytab = [ roll(1,6,0),roll(1,6,0),roll(1,6,0),roll(1,6,0) ]
+    myconsole.log(mytab);
+    var min = Math.min(...mytab);
+    let alreadytaken = false;
+    let res = 0
+    for (let e of mytab) {
+        if ((e == min) && (alreadytaken == false))
+            alreadytaken = true;
+        else {
+            myconsole.log("Taken: " + String(e))
+            res += e;
+        }
+    }
+    myconsole.log("Result = " + String(res))
+    return [res,mytab];
+}
+
+

@@ -25,10 +25,10 @@ class StatsDetermination {
 
  <div id="carac-display" class="carac-display">
  <p>Throws:
- <input type="text" class="stat" id="dice1" name="dice1-${id}" readonly>
- <input type="text" class="stat" id="dice2" name="dice2-${id}" readonly>
- <input type="text" class="stat" id="dice3" name="dice3-${id}" readonly>
- <input type="text" class="stat" id="dice4" name="dice4-${id}" readonly>
+ <input type="text" class="stat" id="dice1-${id}" name="dice1-${id}" readonly>
+ <input type="text" class="stat" id="dice2-${id}" name="dice2-${id}" readonly>
+ <input type="text" class="stat" id="dice3-${id}" name="dice3-${id}" readonly>
+ <input type="text" class="stat" id="dice4-${id}" name="dice4-${id}" readonly>
  </p>
  <p>Total of the 3 best:
  <input type="text" class="stat" id="threebest-${id}" name="threebest-${id}"readonly>
@@ -36,7 +36,7 @@ class StatsDetermination {
     }
     destroy() {
         this.pubsub.publish("CONTROL",
-                            {message: "StatsDetermination " + String(id) + " about to be destroyed..."});
+                            {message: "StatsDetermination " + String(this.id) + " about to be destroyed..."});
         this.elem.innerHTML = "";
     }
 }

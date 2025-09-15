@@ -7,6 +7,7 @@ DIFF = {
     "très difficile": 6,
     "oulala": 7,
     "improbable": 8,
+    "carrément fou":9,
     "impossible": 10
 }
 

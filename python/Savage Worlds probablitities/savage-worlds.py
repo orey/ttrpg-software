@@ -11,8 +11,20 @@ DIFF = {
     "impossible": 10
 }
 
+class RootDie:
+    def proba_at_least(self, num):
+        return "Not implemented"
+    
+    def probas(self, verbose = False):
+        for e in DIFF:
+            if verbose:
+                print(f"Difficulté {e} ({DIFF[e]}) : "
+                      + "{:.0%}".format(self.proba_at_least(DIFF[e])))
+        return [self.proba_at_least(DIFF[e]) for e in DIFF]    
+
+
 #----------------------------------------- Dé
-class De():
+class Die(RootDie):
     def __init__(self, faces):
         self.faces = faces
 
@@ -26,15 +38,10 @@ class De():
             return 1/self.faces
         else:
             return (self.faces - num + 1) / self.faces
-    
-    def probas(self, verbose = False):
-        for e in DIFF:
-            if verbose:
-                print(f"Difficulté {e} ({DIFF[e]}) : "
-                      + "{:.0%}".format(self.proba_at_least(DIFF[e])))
-        return [self.proba_at_least(DIFF[e]) for e in DIFF]
 
-class Duo():
+    
+#----------------------------------------- Two simple dice
+class Duo(RootDie):
     def __init__(self, faces1, faces2):
         self.faces1 = faces1
         self.faces2 = faces2
@@ -47,10 +54,40 @@ class Duo():
                     count += 1
         return count / (self.faces1 * self.faces2)
 
-    def probas(self):
-        return [self.proba_at_least(DIFF[e]) for e in DIFF]
+
+#----------------------------------------- Exploding die
+class ExplodingDie(RootDie):
+    def __init__(self, faces):
+        self.faces = faces
+        self.myprobas = self.simple_probas()
+
+    def simple_probas(self):
+        probas = [0]
+        for i in range(1, self.faces):
+            probas.append(1/self.faces)
+        probas.append(0) #self.faces
+        for i in range(self.faces+1, 2*self.faces):
+            probas.append(1/(self.faces**2))
+        probas.append(0) #2* self.faces
+        for i in range(2*self.faces+1, 3*self.faces):
+            probas.append(1/(self.faces**3))
+        probas.append(0) #3* self.faces
+        for i in range(3*self.faces+1, 4*self.faces):
+            probas.append(1/(self.faces**4))
+        probas.append(0) #4* self.faces
+        print('---')
+        print([(i,probas[i]) for i in range(len(probas))])
+        print(len(probas))
+        return probas
+
+    def proba_at_least(self, num):
+        acc = 0
+        for i in range(num, len(self.myprobas)):
+            acc += self.myprobas[i]
+        return acc
 
 
+    
 
 #----------------------------------------- Pretty print
 def pprint(label, tab, percentage=True):
@@ -65,11 +102,11 @@ def pprint(label, tab, percentage=True):
 
 #============================================= Main
 if __name__ == "__main__":
-    d4 = De(4)
-    d6 = De(6)
-    d8 = De(8)
-    d10 = De(10)
-    d12 = De(12)
+    d4 = Die(4)
+    d6 = Die(6)
+    d8 = Die(8)
+    d10 = Die(10)
+    d12 = Die(12)
     
     #print(d6.combis())
 
@@ -124,3 +161,11 @@ if __name__ == "__main__":
     pprint("d8/d12",Duo(8,12).probas())
     pprint("d10/d12",Duo(10,12).probas())
     pprint("d12/d12",Duo(12,12).probas())
+
+    print("-"*10)
+
+    ed6 = ExplodingDie(6)
+    ed4 = ExplodingDie(4)
+    pprint("Dif", DIFF.values(), False)
+    pprint("ed4", ed4.probas())
+    pprint("ed6", ed6.probas())
